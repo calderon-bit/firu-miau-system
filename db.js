@@ -1,3 +1,4 @@
+// db.js - Conexión segura con manejo de errores para Render
 const sql = require('mssql');
 
 const config = {
@@ -11,15 +12,14 @@ const config = {
     }
 };
 
-// Se maneja el fallo de conexión para evitar que la aplicación se detenga en Render
 const poolPromise = new sql.ConnectionPool(config)
     .connect()
     .then(pool => {
-        console.log('Conectado exitosamente a SQL Server');
+        console.log('Conectado a SQL Server');
         return pool;
     })
     .catch(err => {
-        console.error('Advertencia: No se pudo conectar a SQL Server:', err.message);
+        console.log('Modo local/memoria activado:', err.message);
         return null;
     });
 
