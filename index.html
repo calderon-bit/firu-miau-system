@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Colegio Firu Miau S.A.</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .main-system {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+        }
+
+        .user-badge-bar {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+
+        .btn-logout {
+            margin-top: auto;
+            background: #dc2626;
+        }
+
+        .btn-logout:hover {
+            background: #b91c1c;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .window {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-top: 5px solid #2a5298;
+        }
+
+        .window.active {
+            display: block;
+        }
+
+        .window h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eef2f7;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+
+        input, select {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            background-color: #f8fafc;
+        }
+
+        input[readonly] {
+            background-color: #e2e8f0;
+            cursor: not-allowed;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .btn-action {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .btn-action:hover {
+            background: #1e3c72;
+        }
+
+        .btn-print {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .btn-print:hover {
+            background: #047857;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #cbd5e0;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #2a5298;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .info-card {
+            background: #e0f2fe;
+            border: 1px solid #0284c7;
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            max-width: 500px;
+            color: #0369a1;
+            font-size: 0.95rem;
+        }
+
+        .receipt-card {
+            border: 2px dashed #2a5298;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 550px;
+            margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .receipt-card h3 {
+            color: #1e3c72;
+            text-align: center;
+            border-bottom: 1px solid #cbd5e0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .receipt-row span:first-child {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .receipt-total {
+            border-top: 2px solid #2a5298;
+            padding-top: 10px;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .statement-card {
+            border: 1px solid #cbd5e0;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            max-width: 750px;
+        }
+
+        .statement-header {
+            text-align: center;
+            border-bottom: 2px solid #2a5298;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .statement-header h3 {
+            color: #1e3c72;
+        }
+
+        .letter-card {
+            border: 1px solid #cbd5e0;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            max-width: 700px;
+            border-left: 6px solid #dc2626;
+        }
+
+        .letter-header {
+            text-align: center;
+            border-bottom: 2px solid #eef2f7;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .letter-header h3 {
+            color: #1e3c72;
+            font-size: 1.3rem;
+        }
+
+        .letter-header p {
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .letter-body {
+            line-height: 1.6;
+            color: #2d3748;
+            font-size: 0.98rem;
+        }
+
+        .letter-footer {
+            margin-top: 30px;
+            border-top: 1px solid #eef2f7;
+            padding-top: 15px;
+            text-align: right;
+            font-style: italic;
+            color: #718096;
+        }
+
+        .error-msg {
+            color: #dc2626;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .attempts-counter {
+            color: #d97706;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .auth-box-module {
+            background: #ffffff;
+            border: 2px dashed #1e3c72;
+            border-radius: 10px;
+            padding: 25px;
+            max-width: 400px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        @media print {
+            .sidebar, .btn-action, .btn-print, .nav-btn, .top-header, h2, h3, hr, .form-group, select, .auth-box-module, .btn-module-logout {
+                display: none !important;
+            }
+            body { background: white; }
+            .content { padding: 0; }
+            .window { box-shadow: none; border: none; padding: 0; }
+            .statement-card, .receipt-card { border: 2px solid #000; width: 100%; max-width: 100%; }
+            .letter-card { box-shadow: none; border: 1px solid #000; page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 1. PANTALLA DE LOGIN -->
+<div id="loginScreen" class="login-screen">
+    <div class="login-box">
+        <h2>Colegio Firu Miau S.A.</h2>
+        <p style="margin-bottom:20px; color:#666;">Inicie sesión para acceder al sistema</p>
+        <div class="form-group">
+            <input type="text" id="loginUser" placeholder="Usuario (admin)" style="max-width:100%;">
+        </div>
+        <div class="form-group">
+            <input type="password" id="loginPass" placeholder="Contraseña (admin123)" style="max-width:100%;">
+        </div>
+        <button class="btn-action" style="max-width:100%;" onclick="login()">Ingresar</button>
+        <p id="loginError" class="error-msg"></p>
+        <p id="loginAttempts" class="attempts-counter"></p>
+    </div>
+</div>
+
+<!-- 2. PANTALLA DE BLOQUEO -->
+<div id="lockScreen" class="login-screen" style="display: none;">
+    <div class="login-box" style="border-top: 5px solid #dc2626;">
+        <h2 style="color: #dc2626;">SISTEMA BLOQUEADO</h2>
+        <p style="margin-bottom:20px; color:#666;">Se han alcanzado los 5 intentos fallidos permitidos. Ingrese la contraseña de maestro para desbloquear:</p>
+        <div class="form-group">
+            <input type="password" id="unlockPass" placeholder="Contraseña maestro de desbloqueo" style="max-width:100%;">
+        </div>
+        <button class="btn-action" style="max-width:100%; background: #dc2626;" onclick="desbloquear()">Desbloquear Sistema</button>
+        <p id="unlockError" class="error-msg"></p>
+    </div>
+</div>
+
+<!-- 3. SISTEMA COMPLETO -->
+<div id="mainSystem" class="main-system">
+
+    <!-- Menú Lateral -->
+    <div class="sidebar">
+        <h2>Firu Miau S.A.</h2>
+        <div class="user-badge-bar">👤 Usuario: <b id="sessionUserSidebar">admin</b></div>
+        <button class="nav-btn active" onclick="showWindow('w1', this)">1. Inicio del Sistema</button>
+        <button class="nav-btn" onclick="showWindow('w2', this); prepararInscripcionDiario();">2. Inscripción Plan Diario</button>
+        <button class="nav-btn" onclick="showWindow('w3', this); prepararInscripcionFS();">3. Inscripción Plan F.S.</button>
+        <button class="nav-btn" onclick="showWindow('w4', this)">4. Recibo de Inscripción</button>
+        <button class="nav-btn" onclick="showWindow('w5', this); inicializarModuloCobros();">5. Cobro de Mensualidad</button>
+        <button class="nav-btn" onclick="showWindow('w6', this)">6. Recibo de Cobro</button>
+        <button class="nav-btn" onclick="showWindow('w7', this); cargarTablaMorosos();">7. Reporte de Morosos</button>
+        <button class="nav-btn" onclick="showWindow('w8', this); cargarTablaSolventes();">8. Reporte de Solventes</button>
+        <button class="nav-btn" onclick="showWindow('w9', this)">9. Cartas de Aviso</button>
+        <button class="nav-btn" onclick="showWindow('w10', this); inicializarModuloTraslados();">10. Traslados y Est. Cuenta</button>
+        <button class="nav-btn" onclick="showWindow('w12', this); cargarIngresosDelDia();">12. Ingresos del Día</button>
+        <button class="nav-btn" onclick="showWindow('w11', this); requerirAccesoModulo11();">11. Registro de Estudiantes</button>
+        <button class="nav-btn btn-logout" onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <!-- Ventanas de Funcionalidad -->
+    <div class="content">
+
+        <!-- ENCABEZADO SUPERIOR -->
+        <div class="top-header">
+            <span style="font-size:1.1rem; font-weight:bold; color:#1e3c72;">Sistema de Control Escolar</span>
+            <span style="background:#e0f2fe; color:#0369a1; padding:6px 14px; border-radius:20px; font-weight:bold; font-size:0.9rem;">
+                    👤 Usuario Activo: <span id="sessionUserTop">admin</span>
+                </span>
+        </div>
+
+        <!-- Ventana 1 -->
+        <div id="w1" class="window active">
+            <h2>1. Panel Principal</h2>
+            <p>Bienvenido al sistema. Sesión activa como: <b id="sessionUserBody">admin</b></p>
+            <p style="margin-top:10px; color:#555;">Utilice el menú lateral para gestionar inscripciones, cobros y reportes de los estudiantes.</p>
+        </div>
+
+        <!-- Ventana 2: Inscripción Plan Diario -->
+        <div id="w2" class="window">
+            <h2>2. Inscripción Plan Diario (Prepa a Diversificado)</h2>
+            <div class="form-group">
+                <label>Código Estudiante (Automático)</label>
+                <input type="text" id="pdCodigo" readonly placeholder="001">
+            </div>
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" id="pdNombre" placeholder="Ingrese nombre del estudiante">
+            </div>
+            <div class="form-group">
+                <label>Nivel</label>
+                <select id="pdNivel" onchange="actualizarOpcionesCarrera('pdNivel', 'pdCarrera')">
+                    <option value="Prepa">Prepa</option>
+                    <option value="Primaria">Primaria</option>
+                    <option value="Básicos">Básicos</option>
+                    <option value="Diversificado" selected>Diversificado</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Carrera / Grado</label>
+                <select id="pdCarrera">
+                    <!-- Se llena dinámicamente -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Sección</label>
+                <select id="pdSeccion">
+                    <option value="A">Sección A</option>
+                    <option value="B">Sección B</option>
+                    <option value="C">Sección C</option>
+                </select>
+            </div>
+            <button class="btn-action" onclick="inscribir('DIARIO')">Inscribir Plan Diario</button>
+        </div>
+
+        <!-- Ventana 3: Inscripción Plan Fin de Semana -->
+        <div id="w3" class="window">
+            <h2>3. Inscripción Plan Fin de Semana (Primaria a Diversificado)</h2>
+            <div class="form-group">
+                <label>Código Estudiante (Automático)</label>
+                <input type="text" id="pfsCodigo" readonly placeholder="0001">
+            </div>
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" id="pfsNombre" placeholder="Ingrese nombre del estudiante">
+            </div>
+            <div class="form-group">
+                <label>Nivel</label>
+                <select id="pfsNivel" onchange="actualizarOpcionesCarrera('pfsNivel', 'pfsCarrera')">
+                    <option value="Primaria">Primaria</option>
+                    <option value="Básicos">Básicos</option>
+                    <option value="Diversificado" selected>Diversificado</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Carrera / Grado</label>
+                <select id="pfsCarrera">
+                    <!-- Se llena dinámicamente -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Sección</label>
+                <select id="pfsSeccion">
+                    <option value="A">Sección A</option>
+                    <option value="B">Sección B</option>
+                    <option value="C">Sección C</option>
+                </select>
+            </div>
+            <button class="btn-action" onclick="inscribir('FIN_DE_SEMANA')">Inscribir Plan Fin de Semana</button>
+        </div>
+
+        <!-- Ventana 4 -->
+        <div id="w4" class="window">
+            <h2>4. Emisión de Recibo de Inscripción</h2>
+            <div id="contenedorReciboInscripcion">
+                <p style="color:#666;">No hay recibos de inscripción recientes.</p>
+            </div>
+        </div>
+
+        <!-- Ventana 5: COBRO DE MENSUALIDADES -->
+        <div id="w5" class="window">
+            <h2>5. Cobro de Mensualidad (Enero - Octubre)</h2>
+
+            <div class="form-group">
+                <label>Seleccionar Plan de Estudios</label>
+                <select id="pagoPlanSelect" onchange="filtrarAlumnosPorPlan()">
+                    <option value="DIARIO">Plan Diario</option>
+                    <option value="FIN_DE_SEMANA">Plan Fin de Semana</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Seleccionar Estudiante Inscrito</label>
+                <select id="comboEstudiantesCobro" onchange="seleccionarAlumnoCombo(this.value)">
+                    <option value="">-- Seleccionar de la lista --</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="display:none;">
+                <input type="text" id="pagoCodigo">
+            </div>
+
+            <div id="infoAlumnoCobro" class="info-card" style="display:none;"></div>
+
+            <div class="form-group">
+                <label>Cantidad de Meses a Cancelar</label>
+                <select id="cantMesesCobro" onchange="actualizarCalculoMeses()">
+                    <option value="1">1 Mes (Q250.00)</option>
+                    <option value="2">2 Meses (Q500.00)</option>
+                    <option value="3">3 Meses (Q750.00)</option>
+                    <option value="4">4 Meses (Q1,000.00)</option>
+                    <option value="5">5 Meses (Q1,250.00)</option>
+                    <option value="6">6 Meses (Q1,500.00)</option>
+                    <option value="7">7 Meses (Q1,750.00)</option>
+                    <option value="8">8 Meses (Q2,000.00)</option>
+                    <option value="9">9 Meses (Q2,250.00)</option>
+                    <option value="10">10 Meses (Q2,500.00)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Meses a Cobrar (Generados Automáticamente)</label>
+                <input type="text" id="pagoMesesTexto" readonly placeholder="Seleccione un estudiante">
+            </div>
+
+            <div class="form-group">
+                <label>Monto Total (Q250 x Mes)</label>
+                <input type="number" id="pagoMonto" value="250" readonly>
+            </div>
+
+            <button class="btn-action" onclick="cobrar()">Registrar Pago</button>
+        </div>
+
+        <!-- Ventana 6 -->
+        <div id="w6" class="window">
+            <h2>6. Recibo de Cobro de Mensualidad</h2>
+            <div id="contenedorReciboPago">
+                <p style="color:#666;">No se ha registrado ningún pago recientemente.</p>
+            </div>
+        </div>
+
+        <!-- Ventana 7 -->
+        <div id="w7" class="window">
+            <h2>7. Reporte de Estudiantes Morosos</h2>
+            <button class="btn-action" style="max-width:250px; display:inline-block;" onclick="cargarTablaMorosos()">Cargar Reporte</button>
+            <button class="btn-print" style="float:right;" onclick="window.print()">Exportar PDF / Imprimir</button>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre Completo</th>
+                    <th>Plan</th>
+                    <th>Nivel</th>
+                    <th>Carrera</th>
+                    <th>Sección</th>
+                    <th>Meses Pagados</th>
+                    <th>Estado</th>
+                </tr>
+                </thead>
+                <tbody id="tablaMorosos">
+                <tr><td colspan="8" style="text-align:center;">Haga clic en Cargar Reporte</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Ventana 8 -->
+        <div id="w8" class="window">
+            <h2>8. Reporte de Estudiantes Solventes</h2>
+            <button class="btn-action" style="max-width:250px; display:inline-block;" onclick="cargarTablaSolventes()">Cargar Reporte</button>
+            <button class="btn-print" style="float:right;" onclick="window.print()">Exportar PDF / Imprimir</button>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre Completo</th>
+                    <th>Plan</th>
+                    <th>Nivel</th>
+                    <th>Carrera</th>
+                    <th>Sección</th>
+                    <th>Meses Pagados</th>
+                    <th>Estado</th>
+                </tr>
+                </thead>
+                <tbody id="tablaSolventes">
+                <tr><td colspan="8" style="text-align:center;">Haga clic en Cargar Reporte</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Ventana 9 -->
+        <div id="w9" class="window">
+            <h2>9. Emisión de Cartas de Aviso por Morosidad</h2>
+            <button class="btn-action" style="max-width:250px; display:inline-block;" onclick="obtenerCartas()">Generar Cartas de Aviso</button>
+            <button class="btn-print" style="float:right;" onclick="window.print()">Exportar PDF / Imprimir</button>
+
+            <div id="contenedorCartas">
+                <p style="color:#666; margin-top:15px;">Presione "Generar Cartas de Aviso" para cargar la vista formal de las notificaciones.</p>
+            </div>
+        </div>
+
+        <!-- Ventana 10 -->
+        <div id="w10" class="window">
+            <h2>10. Traslados entre Carreras/Sección y Estado de Cuenta</h2>
+
+            <h3>A. Traslado de Carrera y Sección</h3>
+            <div class="form-group">
+                <label>Seleccionar Estudiante</label>
+                <select id="trasCodigoCombo">
+                    <option value="">-- Seleccionar Alumno --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Nuevo Nivel</label>
+                <select id="trasNivel" onchange="actualizarOpcionesCarrera('trasNivel', 'trasCarrera')">
+                    <option value="Prepa">Prepa</option>
+                    <option value="Primaria">Primaria</option>
+                    <option value="Básicos">Básicos</option>
+                    <option value="Diversificado" selected>Diversificado</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Nueva Carrera / Grado</label>
+                <select id="trasCarrera">
+                    <!-- Se llena dinámicamente -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Nueva Sección</label>
+                <select id="trasSeccion">
+                    <option value="A">Sección A</option>
+                    <option value="B">Sección B</option>
+                    <option value="C">Sección C</option>
+                </select>
+            </div>
+            <button class="btn-action" onclick="trasladar()">Ejecutar Traslado</button>
+
+            <hr style="margin: 20px 0;">
+
+            <h3>B. Consulta Estado de Cuenta</h3>
+            <div class="form-group">
+                <label>Seleccionar Estudiante</label>
+                <select id="estadoCodigoCombo" onchange="verEstadoCuentaCombo(this.value)">
+                    <option value="">-- Seleccionar Alumno --</option>
+                </select>
+            </div>
+            <button class="btn-action" onclick="verEstadoCuentaCombo(document.getElementById('estadoCodigoCombo').value)">Consultar Estado de Cuenta</button>
+
+            <div id="contenedorEstadoCuenta">
+                <p style="color:#666; margin-top:15px;">Seleccione un estudiante para consultar su informe.</p>
+            </div>
+        </div>
+
+        <!-- Ventana 12 -->
+        <div id="w12" class="window">
+            <h2>12. Reporte de Ingresos por Inscripciones y Mensualidades del Día</h2>
+            <button class="btn-action" style="max-width:250px; display:inline-block;" onclick="cargarIngresosDelDia()">Actualizar Ingresos</button>
+            <button class="btn-print" style="float:right;" onclick="window.print()">Exportar PDF / Imprimir</button>
+
+            <div class="receipt-card" style="max-width:100%; margin-bottom:20px;">
+                <div class="receipt-row receipt-total">
+                    <span>Total Recaudado Hoy:</span>
+                    <span id="totalMontoHoy">Q0.00</span>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Estudiante / Código</th>
+                    <th>Concepto</th>
+                    <th>Mes / Detalle</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                </tr>
+                </thead>
+                <tbody id="tablaIngresosDia">
+                <tr><td colspan="5" style="text-align:center;">Cargando reporte de hoy...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Ventana 11: MÓDULO CON LOGIN PROTEGIDO Y BOTÓN DE SALIDA INTERNA -->
+        <div id="w11" class="window">
+            <h2>11. Estudiantes Inscritos en el Sistema</h2>
+
+            <!-- LOGIN INTERNO PARA MÓDULO 11 -->
+            <div id="m11AuthBox" class="auth-box-module">
+                <h3 style="color:#1e3c72; margin-bottom:10px;">🔒 Acceso Restringido</h3>
+                <p style="color:#666; font-size:0.9rem; margin-bottom:15px;">Ingrese la contraseña administrativa para acceder al listado general de estudiantes:</p>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <input type="password" id="m11Pass" placeholder="Ingrese contraseña (12345)" style="max-width:100%; text-align:center;">
+                </div>
+                <button class="btn-action" style="max-width:100%;" onclick="verificarAccesoM11()">Acceder a Lista</button>
+                <p id="m11Error" class="error-msg"></p>
+            </div>
+
+            <!-- CONTENIDO DEL REGISTRO -->
+            <div id="m11Contenido" style="display: none;">
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn-action" style="max-width:200px; margin-top:0;" onclick="listarEstudiantes()">Actualizar Lista</button>
+                    <!-- BOTÓN PARA BLOQUEAR / SALIR DE ESTE MÓDULO ESPECÍFICO -->
+                    <button class="btn-action btn-module-logout" style="max-width:220px; margin-top:0; background: #dc2626;" onclick="cerrarModulo11()">🔒 Cerrar Sesión del Módulo</button>
+                </div>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Plan</th>
+                        <th>Nivel</th>
+                        <th>Carrera</th>
+                        <th>Sección</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tablaEstudiantes">
+                    <tr><td colspan="7" style="text-align:center;">Cargando estudiantes...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    let intentosFallidos = 0;
+    const MASTER_KEY = "JrJs@W13";
+    const MODULE11_KEY = "12345";
+    let modulo11Autorizado = false;
+    let listaGlobalEstudiantes = [];
+    const listaMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre"];
+    let mesesPendientesEstudiante = [];
+
+    const opcionesPorNivel = {
+        "Prepa": ["Etapa 4", "Etapa 5", "Etapa 6 (Preparatoria)"],
+        "Primaria": ["1ro Primaria", "2do Primaria", "3ro Primaria", "4to Primaria", "5to Primaria", "6to Primaria"],
+        "Básicos": ["1ro Básico", "2do Básico", "3ro Básico"],
+        "Diversificado": [
+            "Perito Contador",
+            "Bachillerato en Computación",
+            "Secretariado Bilingüe",
+            "Magisterio",
+            "Perito en Administración"
+        ]
+    };
+
+    function actualizarOpcionesCarrera(idNivelSelect, idCarreraSelect) {
+        const nivelElement = document.getElementById(idNivelSelect);
+        const carreraSelect = document.getElementById(idCarreraSelect);
+        if (!nivelElement || !carreraSelect) return;
+
+        carreraSelect.innerHTML = "";
+        const opciones = opcionesPorNivel[nivelElement.value] || [];
+
+        opciones.forEach(op => {
+            const optElement = document.createElement("option");
+            optElement.value = op;
+            optElement.textContent = op;
+            carreraSelect.appendChild(optElement);
+        });
+    }
+
+    async function login() {
+        loginError.innerText = "";
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario: loginUser.value, password: loginPass.value })
+            });
+            const data = await res.json();
+
+            if (res.ok && data.exito) {
+                intentosFallidos = 0;
+                loginAttempts.innerText = "";
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainSystem').style.display = 'flex';
+
+                const usuarioNombre = loginUser.value || "admin";
+                document.getElementById('sessionUserSidebar').innerText = usuarioNombre;
+                document.getElementById('sessionUserTop').innerText = usuarioNombre;
+                document.getElementById('sessionUserBody').innerText = usuarioNombre;
+
+                await cargarListaBase();
+                prepararInscripcionDiario();
+                prepararInscripcionFS();
+            } else {
+                intentosFallidos++;
+                if (intentosFallidos >= 5) {
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('lockScreen').style.display = 'flex';
+                } else {
+                    loginError.innerText = data.mensaje || "Usuario o contraseña incorrectos";
+                    loginAttempts.innerText = `Intentos fallidos: ${intentosFallidos} de 5`;
+                }
+            }
+        } catch (err) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainSystem').style.display = 'flex';
+            prepararInscripcionDiario();
+            prepararInscripcionFS();
+        }
+    }
+
+    function desbloquear() {
+        if (unlockPass.value === MASTER_KEY) {
+            intentosFallidos = 0;
+            unlockPass.value = "";
+            unlockError.innerText = "";
+            loginAttempts.innerText = "";
+            loginError.innerText = "";
+            document.getElementById('lockScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        } else {
+            unlockError.innerText = "Contraseña de desbloqueo incorrecta";
+        }
+    }
+
+    function logout() {
+        cerrarModulo11();
+        document.getElementById('mainSystem').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        loginUser.value = "";
+        loginPass.value = "";
+        loginError.innerText = "";
+        loginAttempts.innerText = "";
+    }
+
+    function showWindow(windowId, btn) {
+        document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(windowId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function requerirAccesoModulo11() {
+        if (!modulo11Autorizado) {
+            document.getElementById('m11AuthBox').style.display = 'block';
+            document.getElementById('m11Contenido').style.display = 'none';
+            document.getElementById('m11Pass').value = '';
+            document.getElementById('m11Error').innerText = '';
+        } else {
+            document.getElementById('m11AuthBox').style.display = 'none';
+            document.getElementById('m11Contenido').style.display = 'block';
+            listarEstudiantes();
+        }
+    }
+
+    function verificarAccesoM11() {
+        const passEntered = document.getElementById('m11Pass').value;
+        if (passEntered === MODULE11_KEY) {
+            modulo11Autorizado = true;
+            document.getElementById('m11AuthBox').style.display = 'none';
+            document.getElementById('m11Contenido').style.display = 'block';
+            document.getElementById('m11Error').innerText = '';
+            listarEstudiantes();
+        } else {
+            document.getElementById('m11Error').innerText = "Contraseña incorrecta";
+        }
+    }
+
+    // FUNCIÓN PARA BLOQUEAR / CERRAR ÚNICAMENTE EL MÓDULO 11
+    function cerrarModulo11() {
+        modulo11Autorizado = false;
+        document.getElementById('m11Pass').value = '';
+        document.getElementById('m11Error').innerText = '';
+        document.getElementById('m11AuthBox').style.display = 'block';
+        document.getElementById('m11Contenido').style.display = 'none';
+    }
+
+    async function cargarListaBase() {
+        try {
+            const res = await fetch('/api/estudiantes/todos');
+            if (res.ok) {
+                listaGlobalEstudiantes = await res.json();
+            }
+        } catch (err) {
+            console.error("Error al cargar lista base", err);
+        }
+    }
+
+    async function prepararInscripcionDiario() {
+        actualizarOpcionesCarrera('pdNivel', 'pdCarrera');
+        await cargarListaBase();
+
+        const diarios = (listaGlobalEstudiantes || []).filter(e => e.plan === 'DIARIO');
+        let maxNum = diarios.length;
+
+        diarios.forEach(e => {
+            const num = parseInt(e.codigo, 10);
+            if (!isNaN(num) && num > maxNum) maxNum = num;
+        });
+
+        const nuevoNum = maxNum + 1;
+        const inputCod = document.getElementById('pdCodigo');
+        if (inputCod) inputCod.value = String(nuevoNum).padStart(3, '0');
+    }
+
+    async function prepararInscripcionFS() {
+        actualizarOpcionesCarrera('pfsNivel', 'pfsCarrera');
+        await cargarListaBase();
+
+        const fs = (listaGlobalEstudiantes || []).filter(e => e.plan === 'FIN_DE_SEMANA');
+        let maxNum = fs.length;
+
+        fs.forEach(e => {
+            const num = parseInt(e.codigo, 10);
+            if (!isNaN(num) && num > maxNum) maxNum = num;
+        });
+
+        const nuevoNum = maxNum + 1;
+        const inputCod = document.getElementById('pfsCodigo');
+        if (inputCod) inputCod.value = String(nuevoNum).padStart(4, '0');
+    }
+
+    async function inicializarModuloCobros() {
+        await cargarListaBase();
+        filtrarAlumnosPorPlan();
+    }
+
+    function filtrarAlumnosPorPlan() {
+        const planSelect = document.getElementById('pagoPlanSelect');
+        if (!planSelect) return;
+
+        const planElegido = planSelect.value;
+        const combo = document.getElementById('comboEstudiantesCobro');
+        combo.innerHTML = '<option value="">-- Seleccionar de la lista --</option>';
+
+        document.getElementById('infoAlumnoCobro').style.display = 'none';
+        document.getElementById('pagoMesesTexto').value = "";
+        document.getElementById('pagoCodigo').value = "";
+
+        if (Array.isArray(listaGlobalEstudiantes)) {
+            const filtrados = listaGlobalEstudiantes.filter(e => e.plan === planElegido);
+            filtrados.forEach(e => {
+                const nivelTexto = e.nivel || 'Nivel Generico';
+                const detalleTexto = e.carrera || 'General';
+                combo.innerHTML += `<option value="${e.codigo}">${e.codigo} - ${e.nombre} (${nivelTexto} - ${detalleTexto})</option>`;
+            });
+        }
+    }
+
+    async function inicializarModuloTraslados() {
+        await cargarListaBase();
+        actualizarOpcionesCarrera('trasNivel', 'trasCarrera');
+        const comboTras = document.getElementById('trasCodigoCombo');
+        const comboEst = document.getElementById('estadoCodigoCombo');
+
+        comboTras.innerHTML = '<option value="">-- Seleccionar Alumno --</option>';
+        comboEst.innerHTML = '<option value="">-- Seleccionar Alumno --</option>';
+
+        if (Array.isArray(listaGlobalEstudiantes)) {
+            listaGlobalEstudiantes.forEach(e => {
+                const opt = `<option value="${e.codigo}">${e.codigo} - ${e.nombre} (${e.nivel || ''} ${e.carrera || ''} - Sec ${e.seccion})</option>`;
+                comboTras.innerHTML += opt;
+                comboEst.innerHTML += opt;
+            });
+        }
+    }
+
+    function seleccionarAlumnoCombo(codigo) {
+        document.getElementById('pagoCodigo').value = codigo;
+        validarEstudianteCobro(codigo);
+    }
+
+    async function validarEstudianteCobro(codigo) {
+        const card = document.getElementById('infoAlumnoCobro');
+        const codLimpio = codigo.trim();
+
+        if (!codLimpio) {
+            card.style.display = 'none';
+            document.getElementById('pagoMesesTexto').value = "";
+            return;
+        }
+
+        const alumno = listaGlobalEstudiantes.find(e => e.codigo.toString().toLowerCase() === codLimpio.toLowerCase());
+
+        if (alumno) {
+            try {
+                const resEC = await fetch(`/api/estudiantes/${alumno.codigo}/estado-cuenta`);
+                const dataEC = await resEC.json();
+                const pagosRealizados = dataEC.historialPagos || [];
+
+                mesesPendientesEstudiante = listaMeses.filter(m =>
+                    !pagosRealizados.some(p => p.mes.toLowerCase() === m.toLowerCase())
+                );
+
+                actualizarCalculoMeses();
+
+                card.style.display = 'block';
+                card.style.background = '#e0f2fe';
+                card.style.borderColor = '#0284c7';
+                card.style.color = '#0369a1';
+                card.innerHTML = `
+                    <b>Estudiante Encontrado:</b> ${alumno.nombre}<br>
+                    <b>Plan/Sección:</b> ${alumno.plan} - ${alumno.seccion} | <b>Nivel - Carrera/Grado:</b> ${alumno.nivel || 'N/A'} - ${alumno.carrera || 'N/A'}<br>
+                    <span style="color:#059669; font-weight:bold;">✔ Siguiente mes pendiente: ${mesesPendientesEstudiante[0] || 'Al día'}</span>
+                `;
+            } catch (e) {
+                card.style.display = 'block';
+                card.innerHTML = `<b>Estudiante Encontrado:</b> ${alumno.nombre}`;
+            }
+        } else {
+            card.style.display = 'block';
+            card.style.background = '#fef2f2';
+            card.style.borderColor = '#ef4444';
+            card.style.color = '#991b1b';
+            card.innerHTML = `<b>⚠ No localizado:</b> El código "${codLimpio}" no existe.`;
+        }
+    }
+
+    function actualizarCalculoMeses() {
+        const cantidad = parseInt(document.getElementById('cantMesesCobro').value) || 1;
+        const montoTotal = cantidad * 250;
+        document.getElementById('pagoMonto').value = montoTotal;
+
+        if (mesesPendientesEstudiante.length > 0) {
+            const mesesASumar = mesesPendientesEstudiante.slice(0, cantidad);
+            document.getElementById('pagoMesesTexto').value = mesesASumar.join(" y ");
+        } else {
+            document.getElementById('pagoMesesTexto').value = "No posee meses pendientes";
+        }
+    }
+
+    async function inscribir(plan) {
+        const isDiario = plan === 'DIARIO';
+
+        const inputCodigo = isDiario ? document.getElementById('pdCodigo') : document.getElementById('pfsCodigo');
+        const inputNombre = isDiario ? document.getElementById('pdNombre') : document.getElementById('pfsNombre');
+        const inputNivel = isDiario ? document.getElementById('pdNivel') : document.getElementById('pfsNivel');
+        const inputCarrera = isDiario ? document.getElementById('pdCarrera') : document.getElementById('pfsCarrera');
+        const inputSeccion = isDiario ? document.getElementById('pdSeccion') : document.getElementById('pfsSeccion');
+
+        let codigoVal = inputCodigo ? inputCodigo.value : '';
+        if (!codigoVal || codigoVal === "Generando código...") {
+            codigoVal = isDiario ? "001" : "0001";
+        }
+
+        const nombreVal = inputNombre ? inputNombre.value : '';
+
+        if (!nombreVal.trim()) {
+            alert("Por favor ingrese el nombre completo del estudiante.");
+            return;
+        }
+
+        const bodyData = {
+            codigo: codigoVal,
+            nombre: nombreVal,
+            plan: plan,
+            nivel: inputNivel ? inputNivel.value : 'N/A',
+            carrera: inputCarrera ? inputCarrera.value : 'N/A',
+            seccion: inputSeccion ? inputSeccion.value : 'A'
+        };
+
+        try {
+            const res = await fetch('/api/estudiantes/inscripcion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyData)
+            });
+
+            const data = await res.json();
+
+            if (res.ok && data.recibo) {
+                const rec = data.recibo;
+                document.getElementById('contenedorReciboInscripcion').innerHTML = `
+                    <button class="btn-print" onclick="window.print()">Exportar PDF / Imprimir</button>
+                    <div class="receipt-card">
+                        <h3>COMPROBANTE DE INSCRIPCIÓN</h3>
+                        <div class="receipt-row"><span>No. Recibo:</span> <span>${rec.noRecibo}</span></div>
+                        <div class="receipt-row"><span>Código Estudiante:</span> <span>${rec.codigoEstudiante}</span></div>
+                        <div class="receipt-row"><span>Nombre Estudiante:</span> <span>${rec.nombreEstudiante}</span></div>
+                        <div class="receipt-row"><span>Plan de Estudios:</span> <span>${rec.planInscrito}</span></div>
+                        <div class="receipt-row"><span>Fecha:</span> <span>${rec.fecha}</span></div>
+                        <div class="receipt-row receipt-total"><span>Monto Inscripción:</span> <span>Q${parseFloat(rec.montoInscripcion).toFixed(2)}</span></div>
+                    </div>
+                `;
+                alert("¡Inscripción realizada exitosamente!");
+
+                if (inputNombre) inputNombre.value = "";
+
+                if (isDiario) await prepararInscripcionDiario(); else await prepararInscripcionFS();
+                showWindow('w4', document.querySelectorAll('.nav-btn')[3]);
+            } else {
+                alert("Error del servidor: " + (data.error || data.mensaje || "No se pudo guardar la inscripción."));
+            }
+        } catch (err) {
+            console.error("Error en petición:", err);
+            alert("Error de conexión al guardar el estudiante.");
+        }
+    }
+
+    async function cobrar() {
+        const codEst = document.getElementById('pagoCodigo').value;
+        const cantidad = parseInt(document.getElementById('cantMesesCobro').value) || 1;
+        const mesesAProcesar = mesesPendientesEstudiante.slice(0, cantidad);
+        const montoTotal = parseFloat(document.getElementById('pagoMonto').value);
+
+        if (!codEst) {
+            alert("Por favor seleccione un estudiante de la lista.");
+            return;
+        }
+
+        if (mesesAProcesar.length === 0) {
+            alert("El estudiante no posee meses pendientes de cobro.");
+            return;
+        }
+
+        let ultimoRecibo = null;
+        for (const mesItem of mesesAProcesar) {
+            const res = await fetch('/api/pagos/cobrar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codigoEstudiante: codEst, mes: mesItem, monto: 250 })
+            });
+            const data = await res.json();
+            if (data.reciboPago) ultimoRecibo = data.reciboPago;
+        }
+
+        if (ultimoRecibo) {
+            document.getElementById('contenedorReciboPago').innerHTML = `
+                <button class="btn-print" onclick="window.print()">Exportar PDF / Imprimir</button>
+                <div class="receipt-card">
+                    <h3>RECIBO DE PAGO DE MENSUALIDAD</h3>
+                    <div class="receipt-row"><span>Estudiante:</span> <span>${ultimoRecibo.estudiante}</span></div>
+                    <div class="receipt-row"><span>Meses Pagados:</span> <span>${mesesAProcesar.join(" y ")} (${cantidad} Meses)</span></div>
+                    <div class="receipt-row"><span>Fecha de Pago:</span> <span>${ultimoRecibo.fecha}</span></div>
+                    <div class="receipt-row receipt-total"><span>Monto Total Cobrado:</span> <span>Q${montoTotal.toFixed(2)}</span></div>
+                </div>
+            `;
+            alert(`Pago por Q${montoTotal.toFixed(2)} (${mesesAProcesar.join(" y ")}) procesado con éxito.`);
+            showWindow('w6', document.querySelectorAll('.nav-btn')[5]);
+        } else {
+            alert("Error al procesar el cobro. Verifique la información.");
+        }
+    }
+
+    async function cargarIngresosDelDia() {
+        const tbody = document.getElementById('tablaIngresosDia');
+        const totalSpan = document.getElementById('totalMontoHoy');
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cargando ingresos del día...</td></tr>';
+        try {
+            const res = await fetch('/api/estudiantes/todos');
+            const estudiantes = await res.json();
+            let totalHoy = 0;
+            let filasHTML = '';
+
+            for (const est of estudiantes) {
+                const resEC = await fetch(`/api/estudiantes/${est.codigo}/estado-cuenta`);
+                const dataEC = await resEC.json();
+                const pagos = dataEC.historialPagos || [];
+
+                pagos.forEach(p => {
+                    const montoVal = parseFloat(p.monto) || 250;
+                    totalHoy += montoVal;
+                    filasHTML += `
+                        <tr>
+                            <td><b>${est.nombre}</b> (${est.codigo})</td>
+                            <td>Mensualidad Escolar</td>
+                            <td>Cobro de Mes: ${p.mes}</td>
+                            <td>Q${montoVal.toFixed(2)}</td>
+                            <td>${new Date(p.fecha_pago).toLocaleDateString()}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            totalSpan.innerText = `Q${totalHoy.toFixed(2)}`;
+            tbody.innerHTML = filasHTML || '<tr><td colspan="5" style="text-align:center;">No hay ingresos registrados en la fecha de hoy.</td></tr>';
+        } catch (err) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Error al cargar reporte de ingresos</td></tr>';
+        }
+    }
+
+    async function cargarTablaMorosos() {
+        const tbody = document.getElementById('tablaMorosos');
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Cargando morosos...</td></tr>';
+        try {
+            const res = await fetch('/api/reportes/morosos');
+            const data = await res.json();
+
+            if (!data.datos || data.datos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No hay estudiantes morosos registrados.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.datos.map(e => `
+                <tr>
+                    <td><b>${e.codigo}</b></td>
+                    <td>${e.nombre}</td>
+                    <td>${e.plan}</td>
+                    <td>${e.nivel || 'N/A'}</td>
+                    <td>${e.carrera || 'N/A'}</td>
+                    <td>${e.seccion}</td>
+                    <td>${e.mesesPagados}</td>
+                    <td><span style="color: #dc2626; font-weight: bold;">MOROSO</span></td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">Error al cargar datos desde el servidor</td></tr>';
+        }
+    }
+
+    async function cargarTablaSolventes() {
+        const tbody = document.getElementById('tablaSolventes');
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Cargando solventes...</td></tr>';
+        try {
+            const res = await fetch('/api/reportes/solventes');
+            const data = await res.json();
+
+            if (!data.datos || data.datos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No hay estudiantes solventes registrados.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.datos.map(e => `
+                <tr>
+                    <td><b>${e.codigo}</b></td>
+                    <td>${e.nombre}</td>
+                    <td>${e.plan}</td>
+                    <td>${e.nivel || 'N/A'}</td>
+                    <td>${e.carrera || 'N/A'}</td>
+                    <td>${e.seccion}</td>
+                    <td>${e.mesesPagados}</td>
+                    <td><span style="color: #059669; font-weight: bold;">SOLVENTE</span></td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">Error al cargar datos desde el servidor</td></tr>';
+        }
+    }
+
+    async function obtenerCartas() {
+        const contenedor = document.getElementById('contenedorCartas');
+        contenedor.innerHTML = '<p style="color:#666;">Cargando cartas de aviso...</p>';
+        try {
+            const res = await fetch('/api/reportes/morosos');
+            const data = await res.json();
+
+            if (!data.datos || data.datos.length === 0) {
+                contenedor.innerHTML = '<p style="color:#059669; font-weight:bold; margin-top:15px;">No hay estudiantes morosos que requieran carta de aviso.</p>';
+                return;
+            }
+
+            const fechaActual = new Date().toLocaleDateString();
+
+            contenedor.innerHTML = data.datos.map(e => `
+                <div class="letter-card">
+                    <div class="letter-header">
+                        <h3>COLEGIO FIRU MIAU S.A.</h3>
+                        <p>NOTIFICACIÓN OFICIAL DE MOROSIDAD</p>
+                    </div>
+                    <div class="letter-body">
+                        <p><b>Fecha:</b> ${fechaActual}</p><br>
+                        <p><b>Estudiante:</b> ${e.nombre} (Código: ${e.codigo})</p>
+                        <p><b>Plan/Sección:</b> ${e.plan} - Sección ${e.seccion}</p><br>
+                        <p>Estimado Padre de Familia / Encargado,</p><br>
+                        <p>Por medio de la presente le informamos que el estudiante registrado presenta morosidad acumulada en sus cuotas escolares (Pagos registrados: ${e.mesesPagados} cuotas).</p><br>
+                        <p>Le solicitamos presentarse a las oficinas administrativas del establecimiento a la brevedad para regularizar su estado de cuenta.</p>
+                    </div>
+                    <div class="letter-footer">
+                        <p>Atentamente,<br><b>Dirección Administrativa - Firu Miau S.A.</b></p>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (err) {
+            contenedor.innerHTML = '<p style="color:red; margin-top:15px;">Error al obtener las cartas de aviso.</p>';
+        }
+    }
+
+    async function trasladar() {
+        const codEst = document.getElementById('trasCodigoCombo').value;
+        const nuevaCarr = document.getElementById('trasCarrera').value;
+        const nuevaSec = document.getElementById('trasSeccion').value;
+
+        if (!codEst) {
+            alert("Por favor seleccione un estudiante de la lista.");
+            return;
+        }
+
+        const res = await fetch('/api/estudiantes/traslado', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codigo: codEst, nuevaCarrera: nuevaCarr, nuevaSeccion: nuevaSec })
+        });
+        const data = await res.json();
+        alert(data.mensaje || data.error);
+        inicializarModuloTraslados();
+    }
+
+    async function verEstadoCuentaCombo(codigo) {
+        if (!codigo) return;
+        const contenedor = document.getElementById('contenedorEstadoCuenta');
+        contenedor.innerHTML = '<p style="color:#666;">Consultando estado de cuenta...</p>';
+        try {
+            const res = await fetch(`/api/estudiantes/${codigo}/estado-cuenta`);
+            const data = await res.json();
+
+            if (!res.ok || !data.estudiante) {
+                contenedor.innerHTML = `<p style="color:#dc2626; margin-top:15px;">${data.mensaje || 'Estudiante no encontrado.'}</p>`;
+                return;
+            }
+
+            const est = data.estudiante;
+            const historial = data.historialPagos || [];
+
+            const filasTabla = historial.length > 0 ? historial.map(p => `
+                <tr>
+                    <td>${p.mes}</td>
+                    <td>Q${parseFloat(p.monto).toFixed(2)}</td>
+                    <td><span style="color:#059669; font-weight:bold;">${p.estado}</span></td>
+                    <td>${new Date(p.fecha_pago).toLocaleDateString()}</td>
+                </tr>
+            `).join('') : '<tr><td colspan="4" style="text-align:center;">No posee pagos registrados aún.</td></tr>';
+
+            contenedor.innerHTML = `
+                <div style="margin-top:20px; text-align:right;">
+                    <button class="btn-print" onclick="window.print()">Exportar PDF / Imprimir</button>
+                </div>
+                <div class="statement-card">
+                    <div class="statement-header">
+                        <h3>COLEGIO FIRU MIAU S.A.</h3>
+                        <p>INFORME DE ESTADO DE CUENTA (${est.plan})</p>
+                    </div>
+                    <div class="receipt-row"><span>Código Estudiante:</span> <span>${est.codigo}</span></div>
+                    <div class="receipt-row"><span>Nombre Estudiante:</span> <span>${est.nombre}</span></div>
+                    <div class="receipt-row"><span>Plan / Sección:</span> <span>${est.plan} - ${est.seccion}</span></div>
+                    <div class="receipt-row"><span>Nivel / Carrera:</span> <span>${est.nivel || 'N/A'} - ${est.carrera || 'N/A'}</span></div>
+
+                    <h4 style="margin-top:20px; color:#1e3c72; border-bottom:1px solid #cbd5e0; padding-bottom:5px;">Historial de Pagos</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Mes Pagado</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                                <th>Fecha de Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filasTabla}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } catch (err) {
+            contenedor.innerHTML = '<p style="color:red; margin-top:15px;">Error al obtener el estado de cuenta desde el servidor.</p>';
+        }
+    }
+
+    async function listarEstudiantes() {
+        const tbody = document.getElementById('tablaEstudiantes');
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Cargando estudiantes...</td></tr>';
+        try {
+            const res = await fetch('/api/estudiantes/todos');
+            const estudiantes = await res.json();
+
+            if (!Array.isArray(estudiantes) || estudiantes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay estudiantes registrados</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = estudiantes.map(e => `
+                <tr>
+                    <td><b>${e.codigo}</b></td>
+                    <td>${e.nombre}</td>
+                    <td>${e.plan}</td>
+                    <td>${e.nivel || 'N/A'}</td>
+                    <td>${e.carrera || 'N/A'}</td>
+                    <td>${e.seccion}</td>
+                    <td style="text-align:center;">
+                        <button style="background:#dc2626; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:bold;" onclick="eliminarEstudiante('${e.codigo}')">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:red;">Error al cargar datos desde el servidor</td></tr>';
+        }
+    }
+
+    async function eliminarEstudiante(codigo) {
+        if (confirm(`¿Está seguro de que desea eliminar al estudiante con código: ${codigo}? Esta acción borrará sus datos e historial de pagos de SQL Server.`)) {
+            try {
+                const res = await fetch(`/api/estudiantes/${codigo}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                alert(data.mensaje);
+                listarEstudiantes();
+            } catch (err) {
+                alert("Error al intentar eliminar el estudiante.");
+            }
+        }
+    }
+</script>
+</body>
+</html>
