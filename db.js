@@ -1,26 +1,26 @@
 const sql = require('mssql');
 
 const config = {
-    user: 'ALEX_HACKS_SQLLogin_1',
-    password: 'be4d6s6m4o',
-    server: 'customs.mssql.somee.com',
-    database: 'customs',
+    user: process.env.DB_USER || 'sa',
+    password: process.env.DB_PASSWORD || 'tu_password',
+    server: process.env.DB_SERVER || 'localhost',
+    database: process.env.DB_NAME || 'ColegioFiruMiau',
     options: {
         encrypt: false,
         trustServerCertificate: true
     }
 };
 
-async function getConnection() {
-    try {
-        const pool = await sql.connect(config);
+// Se maneja el fallo de conexión para evitar que la aplicación se detenga en Render
+const poolPromise = new sql.ConnectionPool(config)
+    .connect()
+    .then(pool => {
+        console.log('Conectado exitosamente a SQL Server');
         return pool;
-    } catch (error) {
-        console.error("Error al conectar a SQL Server:", error);
-    }
-}
+    })
+    .catch(err => {
+        console.error('Advertencia: No se pudo conectar a SQL Server:', err.message);
+        return null;
+    });
 
-module.exports = {
-    sql,
-    getConnection
-};
+module.exports = { sql, poolPromise };
