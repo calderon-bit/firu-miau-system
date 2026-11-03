@@ -95,3 +95,5 @@ app.get('*', (req, res) => {
 // Puerto asignado por Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor de Colegio Firu Miau corriendo en puerto ${PORT}`));
+
+
